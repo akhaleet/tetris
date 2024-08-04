@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="tetris.css">
+
+    <title>Tetris Igra</title>
+    
+</head> 
+<body>
+    <h1>Dobrodosli u Tetris Igru!</h1>
+    <hr>
+    <div class="button-container">
+    <button id="prikaziDugme" class="btn btn-primary" onclick="prikaziUputstvo()">PRIKAZI UPUTSTVO</button>
+    </div>
+    <hr>
+    <div class="container" id="uputstvo" style="display: none;">
+        <div class="col-12">
+        <ul id="celaLista" class="list-group">
+            <li class="list-group-item list-group-item-info">U igri „Tetris“ igrač koristi tastere kako bi pomjerao blokove koji padaju s vrha prostora za igru, s ciljem da ih složi na način da između njih ostane što manje praznina.</li>
+            <li class="list-group-item list-group-item-info">Kada se cijeli red popuni, taj red nestaje, a svi kvadratići iznad se spuštaju za jedan nivo, što igraču donosi poene.</li>
+            <li class="list-group-item list-group-item-info">Kako igra napreduje, blokovi padaju sve brže, tako da igrač ima sve manje vremena za razmišljanje i slaganje.</li>
+            <li class="list-group-item list-group-item-info">Kada se blokovi nagomilaju do vrha polja za igru, i nema mogućnosti da se novi blok pojavi, igra je završena.</li>
+        </ul>
+
+        </div>
+
+    </div>
+    <hr>
+
+    <div class="button-container">
+        <button id="prikaziTezinuIgreDugme" class="btn btn-primary" onclick="prikaziTezinuIgre()">IZABERI TEZINU IGRE</button>
+    </div>
+        <div class="container" id="tezinaIgre" style="display: none;">
+            <div class="col-12 text-center">
+                <label for="tezinaNivoa" class="form-label" id="tezinaNivoaLabel">Lako:</label><br>
+                <input type="range" class="form-range" min="0" max="2" value="0" id="tezinaNivoa">
+            </div>
+        </div>
+
+        <hr>
+        <hr>
+
+        <div class="button-container">
+            <button id="prikaziBlokove" class="btn btn-primary" onclick="ucitajSlike()">IZABERI KOJE BLOKOVE ZELIS</button>
+        </div>
+                <span id="blokovi" style="display: none;">
+                 
+                </span>
+
+
+    <hr>
+
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="tetriskripta.js"></script>
+</body>
+
+</html>
