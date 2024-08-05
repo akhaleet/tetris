@@ -1,6 +1,7 @@
 $(document).ready(function(){
 
 
+
     $("#prikaziDugme").click(function(){
         $("#uputstvo").toggle(1500);
     });
@@ -62,8 +63,70 @@ $(document).ready(function(){
             }
     }
 
+    let korpa = [];
+
+    function pokupiBlokove(){
+        if(localStorage.getItem("korpa") == null){
+            localStorage.setItem("korpa", korpa);
+        }
+        else {
+            let tekstKorpe = localStorage.getItem("korpa");
+            korpa = tekstKorpe.split(",");
+        }
+    }
+
+    document.getElementById("igrajDugme").addEventListener("click", igrajIgru);
+
+
+    function nekiDogadjaj(){
+        document.getElementById("prikaz").addEventListener("click", prikaziBlokove);
+        document.getElementById("isprazni").addEventListener("click", isprazniBlokove);
+        let nizSlika = document.getElementsByTagName("img");
+
+        for (let i=0; i<nizSlika.length;i++){
+            nizSlika[i].addEventListener("click", function(){
+                klikNaSliku(nizSlika[i].id);
+            });
+
+        }
+    }
+
+    function klikNaSliku(ime){
+        korpa.push(ime);
+        localStorage.setItem("korpa", korpa);
+    }
+
+    function prikaziBlokove(){
+        alert(localStorage.getItem("korpa"));
+    }
+
+    function isprazniBlokove(){
+        korpa = [];
+
+        localStorage.setItem("korpa", "");
+    }
+
+    function igrajIgru(){
+        let testZaIgru = localStorage.getItem("korpa");
+        if (!testZaIgru || testZaIgru === "[]"){
+            alert("Izaberi bar jedan blok!");
+            return;
+        }
+        else {
+            window.location.href = "igrajIgru.html";
+        }
+    }
+
+
+
+
+
     ucitajSlike();
+    nekiDogadjaj();
+    
 
 
 });
+
+
 
