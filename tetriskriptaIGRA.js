@@ -30,6 +30,26 @@ function rekord(){
 
 }
 
+function traziIme(){
+    while (true) {
+        let imeOsobe = prompt("Kako se zovete?");
+        
+        if (imeOsobe === null) {
+            window.location.href = "tetris-upustvo.html";
+            alert("Vracam te na stranicu sa uputstvom!");
+            break;
+        } else if (imeOsobe === "") {
+            // Korisnik je uneo prazan string
+            alert("Moras unijeti svoje ime!");
+        } else {
+            // Validno ime
+            document.getElementById("dobrodosaoIme").innerHTML =
+            "Zdravo " + imeOsobe + "! Dobrodosao u igricu Tetris!";
+            break; // Izlazi iz petlje kada je ime validno
+        }
+    }
+}
+
 
 
 

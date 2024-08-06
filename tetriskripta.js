@@ -83,17 +83,25 @@ $(document).ready(function(){
         document.getElementById("isprazni").addEventListener("click", isprazniBlokove);
         let nizSlika = document.getElementsByTagName("img");
 
-        for (let i=0; i<nizSlika.length;i++){
-            nizSlika[i].addEventListener("click", function(){
+        for (let i = 0; i < nizSlika.length; i++) {
+            nizSlika[i].addEventListener("click", function() {
                 klikNaSliku(nizSlika[i].id);
+                this.classList.toggle('selected');
             });
-
+           
         }
     }
 
-    function klikNaSliku(ime){
-        korpa.push(ime);
+    function klikNaSliku(ime) {
+        const index = korpa.indexOf(ime);
+    
+        if (index === -1) {
+            korpa.push(ime);
+        } else {
+            korpa.splice(index, 1);
+        }
         localStorage.setItem("korpa", korpa);
+    
     }
 
     function prikaziBlokove(){
@@ -102,8 +110,8 @@ $(document).ready(function(){
 
     function isprazniBlokove(){
         korpa = [];
-
         localStorage.setItem("korpa", "");
+    
     }
 
     function igrajIgru(){
@@ -116,6 +124,7 @@ $(document).ready(function(){
             window.location.href = "igrajIgru.html";
         }
     }
+
 
 
 

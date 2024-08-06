@@ -64,6 +64,7 @@ img {
     width: 125px;
     height: 125px;
     margin: 5px;
+    cursor: pointer;
 }
 
 img:hover {
@@ -75,10 +76,15 @@ img:hover {
     margin: 5px;
 }
 
+
 img:active {
   background-color: lightslategray;
 }
 
+.selected {
+  border: 3px solid red;
+  transition: border-color 0.3s;
+}
 
   
   .bcca-breadcrumb {
