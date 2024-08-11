@@ -69,6 +69,8 @@ function provjeriKoliziju() {
     }
     return false;
 }
+
+let brojac = 0;
 function provjeriIObrisiPuneRedove() {
     let tabela = document.querySelector('#tetris table');
     let redovi = tabela.rows;
@@ -90,6 +92,9 @@ function provjeriIObrisiPuneRedove() {
 
         if (punRed) {
             fullRows.push(i);
+            brojac += 5;
+            updateBrojacDisplay();
+
         }
     }
 
@@ -98,6 +103,7 @@ function provjeriIObrisiPuneRedove() {
         fullRows.forEach(rowIndex => {
             // obrisi sve kocke u tom redu iz oldKocke
             oldKocke = oldKocke.filter(koordinate => koordinate.i !== rowIndex);
+            
         });
 
         //posle brisanja punih redova, pomeri sve kocke iznad njih nadole
@@ -119,6 +125,11 @@ function provjeriIObrisiPuneRedove() {
     }
 }
 
+function updateBrojacDisplay() {
+    let brojacElement = document.getElementById('brojacDisplay');
+        brojacElement.textContent = parseInt(brojac); // Prikazuje samo brojčanu vrednost
+}
+
 
 document.onkeydown = function(event) {
     let tabela = document.querySelector('#tetris table');
@@ -129,16 +140,17 @@ document.onkeydown = function(event) {
         if (K[i].i >= redovi.length - 1) {
             dugmeProvjera = false;
         }
-        if (!dugmeProvjera) {
-            return;
-        }
+    }
+    if (!dugmeProvjera) {
+        return;
     }
 
     switch (event.keyCode) {
         case 37: // Levo
             let levoOk = true;
             for (let i = 0; i < K.length; i++) {
-                if (K[i].j <= 0) {
+                let kocka = K[i];
+                if (kocka.j <= 0 || oldKocke.some(oldKocka => oldKocka.i === kocka.i && oldKocka.j === kocka.j - 1)) {
                     levoOk = false;
                     break;
                 }
@@ -147,15 +159,16 @@ document.onkeydown = function(event) {
             if (levoOk) {
                 for (let i = 0; i < K.length; i++) {
                     K[i].j -= 1;
-                }
+                }  
                 obojiKoordinate();
             }
             break;
-        
+
         case 39: // Desno
             let desnoOk = true;
             for (let i = 0; i < K.length; i++) {
-                if (K[i].j >= 9) {
+                let kocka = K[i];
+                if (kocka.j >= 9 || oldKocke.some(oldKocka => oldKocka.i === kocka.i && oldKocka.j === kocka.j + 1)) {
                     desnoOk = false;
                     break;
                 }
@@ -168,11 +181,12 @@ document.onkeydown = function(event) {
                 obojiKoordinate();
             }
             break;
-        
+
         case 40: // Dolje
             let doleOk = true;
             for (let i = 0; i < K.length; i++) {
-                if (K[i].i >= redovi.length - 1) {
+                let kocka = K[i];
+                if (kocka.i >= redovi.length - 1 || oldKocke.some(oldKocka => oldKocka.i === kocka.i + 1 && oldKocka.j === kocka.j)) {
                     doleOk = false;
                     break;
                 }
@@ -184,6 +198,7 @@ document.onkeydown = function(event) {
                 }
                 obojiKoordinate();
             }
+
             break;
     }
 }
@@ -196,9 +211,9 @@ setInterval(function spustajElement() {
     for (let i = 0; i < K.length; i++) {
         if (K[i].i >= redovi.length - 1) {
             provjera = false;
-            break;
         }
     }
+   
 
     if (provjeriKoliziju()) {
         oldKocke = oldKocke.concat(K);
@@ -216,3 +231,23 @@ setInterval(function spustajElement() {
 
     obojiKoordinate();
 }, 500);
+
+// function provjeraGubitka(){
+//     let tabela = document.querySelector('#tetris table');
+//     let redovi = tabela.rows;
+//     let provjera = true;
+
+//     for (let i = 0; i < K.length; i++) {
+//         if (K[i].i == 0) {
+//             provjera = false;
+//         }
+//     }
+//     if (!provjera){
+//         alert("Izgubio si");
+//         window.location.href = "rekordi.html";
+//     }
+
+// }
+
+// provjeraGubitka();
+

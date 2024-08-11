@@ -33,7 +33,13 @@ tr,td {
     height: 30px;
 }
 
-
+#divBrojac {
+    width: 150px;
+    border: 3px dotted red;
+    font-size: 30px;
+    background-color: gold;
+    box-shadow: inset 0px 0px 10px 0px red;
+}
 
 
 
