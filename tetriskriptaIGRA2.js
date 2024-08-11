@@ -1,3 +1,5 @@
+
+
 let K = [
     { i: 0, j: 4 },
     { i: 0, j: 5 },
@@ -89,7 +91,9 @@ document.onkeydown = function(event) {
                 return;
             }
         }
+        
     switch (event.keyCode) {
+        
         case 37: // Levo
             let levoOk = true;
             for (let i = 0; i < K.length; i++) {
@@ -106,7 +110,9 @@ document.onkeydown = function(event) {
                 obojiKoordinate();
             }
             break;
+        
 
+        
         case 39: // Desno
             let desnoOk = true;
             for (let i = 0; i < K.length; i++) {
@@ -119,6 +125,24 @@ document.onkeydown = function(event) {
             if (desnoOk) {
                 for (let i = 0; i < K.length; i++) {
                     K[i].j += 1;
+                }
+                obojiKoordinate();
+
+            }
+            break;
+        
+        case 40: // Dolje
+            let doleOk = true;
+            for (let i = 0; i < K.length; i++) {
+                if (K[i].i >= 9) {
+                    doleOk = false;
+                    break;
+                }
+            }
+
+            if (doleOk) {
+                for (let i = 0; i < K.length; i++) {
+                    K[i].i += 1;
                 }
                 obojiKoordinate();
 
@@ -156,8 +180,55 @@ setInterval(function spustajElement() {
         obojiKoordinate();
 }, 500);
 
+let index = 0;
+let table = document.querySelectorAll('#tetris td');
+let a=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+function brojPoena() {
 
-obojiKoordinate();
+    /*let redovi = table.rows;
+    let brojac = 0;
 
+    for (let i=0; i<redovi.length; i++){
+        let red = redovi[i];
+        let celija = red.getElementsByTagName('td');
+        for (let j=0; j<celija.length; j++){
+            let celije = celija[j];
+            if (celije.style.backgroundColor = 'red')
+                brojac++;
+                    if (brojac == celija.length){
+
+                    }
+            }
+        
+        }*/
+
+    if (index < table.length){
+        if (index%10 == 0){
+            if(a.find(counter => counter == 0)){
+                alert("Snj");
+            }
+            else {   
+                console.log(a);
+            }
+        }
+
+        if(window.getComputedStyle(table[index]).backgroundColor=='rgba(255,0,0,0)'){
+            a[index%10]=1;
+        }
+
+
+        index++;
+
+    }
+    else {
+        index=0;
+    }
+
+}
+
+
+// obojiKoordinate();
+
+const interval = setInterval(brojPoena,1);
 
 
