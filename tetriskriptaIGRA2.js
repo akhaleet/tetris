@@ -1,20 +1,65 @@
-let K = [
-    { i: 0, j: 4 },
-    { i: 0, j: 5 },
-    { i: 1, j: 4 },
-    { i: 1, j: 5 }
-];
 
+let currentShape = [];
 let oldKocke = [];
 
+const shapes = {
+    P: [
+        { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 }, { i: 0, j: 6 }
+    ],
+    L: [
+        { i: 0, j: 3 },
+        { i: 1, j: 3 }, { i: 1, j: 4 }, { i: 1, j: 5 }
+    ],
+    LS: [
+                                        { i: 0, j: 5 },
+        { i: 1, j: 3 }, { i: 1, j: 4 }, { i: 1, j: 5 },
+    ],
+    K: [
+        { i: 0, j: 4 }, { i: 0, j: 5 },
+        { i: 1, j: 4 }, { i: 1, j: 5 }
+    ],
+    Z: [
+                        { i: 0, j: 4 }, { i: 0, j: 5 },
+        { i: 1, j: 3 }, { i: 1, j: 4 }
+    ],
+    ZS: [
+        { i: 0, j: 4 }, { i: 0, j: 5 },
+                        { i: 1, j: 5 }, { i: 1, j: 6 }
+    ],
+    T: [
+                        { i: 0, j: 4 }, 
+        { i: 1, j: 3 }, { i: 1, j: 4 }, { i: 1, j: 5 }
+    ]
+};
+
+function rotiraj(cx, cy, x, y) {
+    var radians = (Math.PI / 180) * 90,
+        cos = Math.cos(radians),
+        sin = Math.sin(radians),
+        nx = Math.round((cos * (x - cx)) + (sin * (y - cy)) + cx),
+        ny = Math.round((cos * (y - cy)) - (sin * (x - cx)) + cy);
+    return {i: nx, j: ny};
+}
+
+
+novaKockaDrop(); 
+obojiKoordinate();
+
 function novaKockaDrop() {
+    const shapeKeys = Object.keys(shapes);
+    const randomKey = shapeKeys[Math.floor(Math.random() * shapeKeys.length)];
+    currentShape = shapes[randomKey].map(k => ({ ...k }));
+}
+
+
+/*function novaKockaDrop() {
     K = [
         { i: 0, j: 4 },
         { i: 0, j: 5 },
         { i: 1, j: 4 },
         { i: 1, j: 5 }
     ];
-}
+}*/
 
 function obojiKoordinate(){
     let tabela = document.querySelector('#tetris table');
@@ -41,10 +86,10 @@ function obojiKoordinate(){
                 celija.style.boxShadow = 'inset 0 0 20px white';
             }
         }
-    } // obojaj staru kocku
+    } // obojaj stari oblik
 
-    for (let k = 0; k < K.length; k++) {
-        let koordinate = K[k];
+    for (let k = 0; k < currentShape.length; k++) {
+        let koordinate = currentShape[k];
         if (koordinate.i < redovi.length) {
             let red = redovi[koordinate.i];
             let celije = red.getElementsByTagName('td');
@@ -54,16 +99,17 @@ function obojiKoordinate(){
                 celija.style.boxShadow = 'inset 0 0 20px white';
             }
         }
-    } // obojaj trenutnu kocku
+    } // obojaj trenutni oblik
 }
 
 function provjeriKoliziju() {
     let tabela = document.querySelector('#tetris table');
     let redovi = tabela.rows;
     
-    for (let i = 0; i < K.length; i++) {
-        let kocka = K[i];
-        if (oldKocke.some(oldKocka => oldKocka.i - 1 === kocka.i && oldKocka.j === kocka.j)) {
+    for (let i = 0; i < currentShape.length; i++) {
+        let kocka = currentShape[i];
+        if (kocka.i >= redovi.length - 1 || 
+            oldKocke.some(oldKocka => oldKocka.i === kocka.i + 1 && oldKocka.j === kocka.j)) {
             return true;
         }
     }
@@ -136,20 +182,22 @@ document.onkeydown = function(event) {
     let redovi = tabela.rows;
     let dugmeProvjera = true;
 
-    for (let i = 0; i < K.length; i++) {
-        if (K[i].i >= redovi.length - 1) {
+    for (let i = 0; i < currentShape.length; i++) {
+        if (currentShape[i].i >= redovi.length - 1) {
             dugmeProvjera = false;
         }
     }
+
     if (!dugmeProvjera) {
         return;
     }
 
+
     switch (event.keyCode) {
         case 37: // Levo
             let levoOk = true;
-            for (let i = 0; i < K.length; i++) {
-                let kocka = K[i];
+            for (let i = 0; i < currentShape.length; i++) {
+                let kocka = currentShape[i];
                 if (kocka.j <= 0 || oldKocke.some(oldKocka => oldKocka.i === kocka.i && oldKocka.j === kocka.j - 1)) {
                     levoOk = false;
                     break;
@@ -157,8 +205,8 @@ document.onkeydown = function(event) {
             }
 
             if (levoOk) {
-                for (let i = 0; i < K.length; i++) {
-                    K[i].j -= 1;
+                for (let i = 0; i < currentShape.length; i++) {
+                    currentShape[i].j -= 1;
                 }  
                 obojiKoordinate();
             }
@@ -166,8 +214,8 @@ document.onkeydown = function(event) {
 
         case 39: // Desno
             let desnoOk = true;
-            for (let i = 0; i < K.length; i++) {
-                let kocka = K[i];
+            for (let i = 0; i < currentShape.length; i++) {
+                let kocka = currentShape[i];
                 if (kocka.j >= 9 || oldKocke.some(oldKocka => oldKocka.i === kocka.i && oldKocka.j === kocka.j + 1)) {
                     desnoOk = false;
                     break;
@@ -175,8 +223,8 @@ document.onkeydown = function(event) {
             }
 
             if (desnoOk) {
-                for (let i = 0; i < K.length; i++) {
-                    K[i].j += 1;
+                for (let i = 0; i < currentShape.length; i++) {
+                    currentShape[i].j += 1;
                 }
                 obojiKoordinate();
             }
@@ -184,8 +232,8 @@ document.onkeydown = function(event) {
 
         case 40: // Dolje
             let doleOk = true;
-            for (let i = 0; i < K.length; i++) {
-                let kocka = K[i];
+            for (let i = 0; i < currentShape.length; i++) {
+                let kocka = currentShape[i];
                 if (kocka.i >= redovi.length - 1 || oldKocke.some(oldKocka => oldKocka.i === kocka.i + 1 && oldKocka.j === kocka.j)) {
                     doleOk = false;
                     break;
@@ -193,13 +241,38 @@ document.onkeydown = function(event) {
             }
 
             if (doleOk) {
-                for (let i = 0; i < K.length; i++) {
-                    K[i].i += 1;
+                for (let i = 0; i < currentShape.length; i++) {
+                    currentShape[i].i += 1;
                 }
                 obojiKoordinate();
             }
 
             break;
+        
+        case 82: //rotacija
+        let slovorOk = true;
+        for (let i = 0; i < currentShape.length; i++) {
+            let kocka = currentShape[i];
+            if (kocka.i >= redovi.length - 1 || oldKocke.some(oldKocka => oldKocka.i === kocka.i + 1 && oldKocka.j === kocka.j)) {
+                slovorOk = false;
+                break;
+            }
+        }
+        if (currentShape.length > 0) {
+            // Pronađi centar rotacije, obično je to prva kocka u obliku
+            let cx = currentShape[0].i;
+            let cy = currentShape[0].j;
+
+            // Rotiraj sve kocke unutar oblika
+            for (let i = 0; i < currentShape.length; i++) {
+                let rotated = rotiraj(cx, cy, currentShape[i].i, currentShape[i].j);
+                currentShape[i].i = rotated.i;
+                currentShape[i].j = rotated.j;
+            }
+            obojiKoordinate();
+            console.log("Rotacija izvršena");
+        }
+        break;
     }
 }
 
@@ -208,24 +281,24 @@ setInterval(function spustajElement() {
     let redovi = tabela.rows;
     let provjera = true;
 
-    for (let i = 0; i < K.length; i++) {
-        if (K[i].i >= redovi.length - 1) {
+    for (let i = 0; i < currentShape.length; i++) {
+        if (currentShape[i].i >= redovi.length - 1) {
             provjera = false;
         }
     }
    
 
     if (provjeriKoliziju()) {
-        oldKocke = oldKocke.concat(K);
+        oldKocke = oldKocke.concat(currentShape);
         provjeriIObrisiPuneRedove(); // Check and remove full rows
         novaKockaDrop();
     } else if (!provjera) {
-        oldKocke = oldKocke.concat(K);
+        oldKocke = oldKocke.concat(currentShape);
         provjeriIObrisiPuneRedove(); // Check and remove full rows
         novaKockaDrop();
     } else {
-        for (let i = 0; i < K.length; i++) {
-            K[i].i += 1;
+        for (let i = 0; i < currentShape.length; i++) {
+            currentShape[i].i += 1;
         }
     }
 
