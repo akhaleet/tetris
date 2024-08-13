@@ -1,6 +1,9 @@
 
+let rekord = 0;
+let sledeciOblikType = '';
 let currentShape = [];
 let oldKocke = [];
+let brojac = 0;
 
 const shapes = {
     P: [
@@ -43,23 +46,56 @@ function rotiraj(cx, cy, x, y) {
 
 
 novaKockaDrop(); 
+updateSledeciOblik();
 obojiKoordinate();
+
 
 function novaKockaDrop() {
     const shapeKeys = Object.keys(shapes);
     const randomKey = shapeKeys[Math.floor(Math.random() * shapeKeys.length)];
     currentShape = shapes[randomKey].map(k => ({ ...k }));
+
+    if (provjeriKoliziju()) {
+        localStorage.setItem("rekord",brojac);
+        let rekord = localStorage.getItem("rekord");
+        
+        if (confirm("Kraj igre! Vaš skor: " + rekord + ". Da li želite da pregledate rekorde?")) {
+            window.location.href="rekordi.html";
+          } else {
+            window.location.href="igrajIgru.html";
+          }
+        return;
+    }
+
+    sledeciOblikType = randomKey;
+    obojiKoordinate();
+    updateSledeciOblik();
+
 }
 
 
-/*function novaKockaDrop() {
-    K = [
-        { i: 0, j: 4 },
-        { i: 0, j: 5 },
-        { i: 1, j: 4 },
-        { i: 1, j: 5 }
-    ];
-}*/
+function updateSledeciOblik() {
+    let sledeciOblik = document.getElementById('sledeciOblik');
+    if (sledeciOblikType) {
+        sledeciOblik.textContent = sledeciOblikType;
+    } else {
+        sledeciOblik.textContent = 'Nema sledećeg oblika';
+    }
+}
+
+function isCurrentShape(shape) {
+    if (currentShape.length !== shape.length) {
+        return false;
+    }
+    for (let i = 0; i < currentShape.length; i++) {
+        let currentBlock = currentShape[i]; 
+        let shapeBlock = shape[i]; 
+        if (currentBlock.i !== shapeBlock.i || currentBlock.j !== shapeBlock.j) {
+            return false; 
+        }
+    }
+    return true;
+}
 
 function obojiKoordinate(){
     let tabela = document.querySelector('#tetris table');
@@ -116,7 +152,7 @@ function provjeriKoliziju() {
     return false;
 }
 
-let brojac = 0;
+
 function provjeriIObrisiPuneRedove() {
     let tabela = document.querySelector('#tetris table');
     let redovi = tabela.rows;
