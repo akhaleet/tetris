@@ -5,6 +5,7 @@ let currentShape = [];
 let oldKocke = [];
 let brojac = 0;
 
+
 const shapes = {
     P: [
         { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 }, { i: 0, j: 6 }
@@ -35,6 +36,16 @@ const shapes = {
     ]
 };
 
+const oblikMapping = {
+    'blok1': 'P', 
+    'blok2': 'LS',  
+    'blok3': 'L',
+    'blok4': 'K', 
+    'blok5': 'ZS',  
+    'blok6': 'T', 
+    'blok7': 'Z'   
+};
+
 function rotiraj(cx, cy, x, y) {
     var radians = (Math.PI / 180) * 90,
         cos = Math.cos(radians),
@@ -48,6 +59,7 @@ function rotiraj(cx, cy, x, y) {
 novaKockaDrop(); 
 updateSledeciOblik();
 obojiKoordinate();
+
 
 
 function novaKockaDrop() {
@@ -152,7 +164,6 @@ function provjeriKoliziju() {
     return false;
 }
 
-
 function provjeriIObrisiPuneRedove() {
     let tabela = document.querySelector('#tetris table');
     let redovi = tabela.rows;
@@ -175,6 +186,7 @@ function provjeriIObrisiPuneRedove() {
         if (punRed) {
             fullRows.push(i);
             brojac += 5;
+
             updateBrojacDisplay();
 
         }
@@ -312,7 +324,26 @@ document.onkeydown = function(event) {
     }
 }
 
-setInterval(function spustajElement() {
+let intervalTime = parseInt(localStorage.getItem('brzina'));
+let gameInterval;
+let prethodniBrojac = 0;
+
+function postaviInterval() {
+    gameInterval = setInterval(spustajElement, intervalTime); 
+}
+
+postaviInterval();
+
+function ubrzajPadanje() {
+    if (brojac >= prethodniBrojac + 25) { 
+        prethodniBrojac = brojac;
+        intervalTime -= 100; 
+        postaviInterval(); 
+    
+}
+}
+
+function spustajElement() {
     let tabela = document.querySelector('#tetris table');
     let redovi = tabela.rows;
     let provjera = true;
@@ -339,7 +370,11 @@ setInterval(function spustajElement() {
     }
 
     obojiKoordinate();
-}, 500);
+    ubrzajPadanje();
+} 
+
+
+
 
 // function provjeraGubitka(){
 //     let tabela = document.querySelector('#tetris table');

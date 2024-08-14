@@ -33,17 +33,22 @@ $(document).ready(function(){
     
 
     slider.addEventListener('input', function() {
+        let brzina;
         switch (slider.value) {
-            case '0':
+            default:
                 label.textContent = 'Lako';
+                brzina = 1000;
                 break;
             case '1':
                 label.textContent = 'Srednje';
+                brzina = 800;
                 break;
             case '2':
                 label.textContent = 'Teško';
+                brzina = 600;
                 break;
         }
+        localStorage.setItem('brzina', brzina);
     });
 
     function ucitajSlike(){
