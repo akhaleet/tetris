@@ -58,15 +58,25 @@ refreshPage();
             let slika = document.createElement("img");
             slika.src = "blokovi/blok"+ i + ".png";
             slika.id = "blok"+i;
+            if (slika.id == "blok1"){
+            slika.style.width = '140px';
+            slika.style.height = 'auto';
+            slika.style.marginTop = '10px';
+            slika.style.marginLeft = '10px';
+            slika.style.padding = '10px';
+            kontejner.appendChild(slika);
+            }
+
+        else {
             slika.style.width = 'auto';
             slika.style.height = '75px';
             slika.style.marginTop = '10px';
             slika.style.marginLeft = '10px';
             slika.style.padding = '10px';
             kontejner.appendChild(slika);
-            
             }
     }
+}
 
     let korpa = [];
 

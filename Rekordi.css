@@ -1,5 +1,5 @@
 body {
-    position: absolute;
+
     width: 100%;
     height: 100%;
     background-image: url('rekordiBackground.png');
@@ -11,4 +11,22 @@ body {
 h1 {
     padding-top: 50px;
     text-align: center;
+  }
+
+#dugme {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    
+  }
+
+#dugmePrazni {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding-top: 10px;
+}
+  
+button {
+    padding: 10px 20px;
   }
