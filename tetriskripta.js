@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-
+refreshPage();
 
     $("#prikaziDugme").click(function(){
         $("#uputstvo").toggle(1500);
@@ -70,6 +70,13 @@ $(document).ready(function(){
 
     let korpa = [];
 
+
+    function refreshPage(){
+        localStorage.setItem("korpa", "");
+    }
+
+
+
     function pokupiBlokove(){
         if(localStorage.getItem("korpa") == null){
             localStorage.setItem("korpa", korpa);
@@ -116,6 +123,10 @@ $(document).ready(function(){
     function isprazniBlokove(){
         korpa = [];
         localStorage.setItem("korpa", "");
+        let selectedImages = document.querySelectorAll('img.selected');
+        selectedImages.forEach(function(makniSelected) {
+            makniSelected.classList.remove('selected');
+        });
     
     }
 

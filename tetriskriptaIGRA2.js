@@ -4,7 +4,11 @@ let sledeciOblikType = '';
 let currentShape = [];
 let oldKocke = [];
 let brojac = 0;
-
+let shapeColor = 'red';
+let shapeType = '';
+let indexRotation = 0;
+let ZRotate = false;
+let slovorOk = false;
 
 const shapes = {
     P: [
@@ -36,14 +40,24 @@ const shapes = {
     ]
 };
 
-const oblikMapping = {
+shapeP= {
+    koordinate: [
+        { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 }, { i: 0, j: 6 }
+    ],
+    shapeColor: 'blue',
+    shapeType: 'P',
+    cx: 0,
+    cy: 4,
+}
+
+const izabraniOblik = {
     'blok1': 'P', 
     'blok2': 'LS',  
     'blok3': 'L',
     'blok4': 'K', 
-    'blok5': 'ZS',  
+    'blok5': 'Z',  
     'blok6': 'T', 
-    'blok7': 'Z'   
+    'blok7': 'ZS'   
 };
 
 function rotiraj(cx, cy, x, y) {
@@ -52,35 +66,114 @@ function rotiraj(cx, cy, x, y) {
         sin = Math.sin(radians),
         nx = Math.round((cos * (x - cx)) + (sin * (y - cy)) + cx),
         ny = Math.round((cos * (y - cy)) - (sin * (x - cx)) + cy);
+    
     return {i: nx, j: ny};
 }
 
+const sledeciOblikSlika = localStorage.getItem("korpa");
+
+function ucitajSlike(){
+    let kontejner = document.getElementById("sledeciOblik");
+    if (!kontejner) {
+        console.error('Element sa ID-jem "sledeciOblik" nije pronađen.');
+        return;
+    }
+    let izabraniBlokovi = [];
+    if (sledeciOblikSlika) {
+        let blokoviString = sledeciOblikSlika.split(',').join(' '); 
+        izabraniBlokovi = [];
+        for (let i = 0; i < blokoviString.length; i++) {
+            izabraniBlokovi.push(parseInt(blokoviString[i]));
+        }
+    }
+
+    for (let i = 0; i < izabraniBlokovi.length; i++) {
+        let blok = izabraniBlokovi[i];
+            let slika = document.createElement("img");
+            slika.src = "blokovi/blok" + blok + ".png"; 
+            slika.id = "blok" + blok; 
+            slika.style.width = 'auto'; 
+            slika.style.height = '75px';
+            slika.style.marginTop = '10px';
+            slika.style.marginLeft = '10px';
+            slika.style.padding = '10px';
+            kontejner.appendChild(slika); 
+
+    }
+}
 
 novaKockaDrop(); 
 updateSledeciOblik();
 obojiKoordinate();
+ucitajSlike();
 
 
 
 function novaKockaDrop() {
-    const shapeKeys = Object.keys(shapes);
-    const randomKey = shapeKeys[Math.floor(Math.random() * shapeKeys.length)];
-    currentShape = shapes[randomKey].map(k => ({ ...k }));
+    const sledeciOblikSlika = localStorage.getItem('korpa');
+    if (sledeciOblikSlika) {
+        let izabraniBlokovi = sledeciOblikSlika.split(',');
+        const dostupniOblici = izabraniBlokovi.map(blok => izabraniOblik[blok]);
 
+        if (dostupniOblici.length > 0) {
+            const shapeKeys = Object.keys(dostupniOblici);
+            const randomKey = dostupniOblici[Math.floor(Math.random() * dostupniOblici.length)];
+            currentShape = shapes[randomKey].map(k => ({ ...k }));
+            sledeciOblikType = randomKey; 
+        }
+    }
+    else {
+            const shapeKeys = Object.keys(shapes);
+            const randomKey = shapeKeys[Math.floor(Math.random() * shapeKeys.length)];
+            currentShape = shapes[randomKey].map(k => ({ ...k }));
+            sledeciOblikType = randomKey;
+    }
     if (provjeriKoliziju()) {
         localStorage.setItem("rekord",brojac);
         let rekord = localStorage.getItem("rekord");
         
-        if (confirm("Kraj igre! Vaš skor: " + rekord + ". Da li želite da pregledate rekorde?")) {
-            window.location.href="rekordi.html";
-          } else {
-            window.location.href="igrajIgru.html";
-          }
-        return;
+        // if (confirm("Kraj igre! Vaš skor: " + parseInt(rekord) + ". Da li želite da pregledate rekorde?") == true) {
+        //     window.location.href="rekordi.html";
+        //   } else {
+        //     window.location.href="tetris-upustvo.html";
+        //   }
     }
 
-    sledeciOblikType = randomKey;
-    obojiKoordinate();
+    if (isCurrentShape(shapes.P)) {
+        shapeColor = '#007fff';
+        shapeType = 'P';
+        indexRotation = 1;
+    }
+
+    else if (isCurrentShape(shapes.LS)) {
+        shapeColor = 'orange';
+        shapeType = 'LS';
+        indexRotation = 2;
+    }
+    else if (isCurrentShape(shapes.L)) {
+        shapeColor = 'darkblue';
+        shapeType = 'L';
+        indexRotation = 2;
+    }
+    else if (isCurrentShape(shapes.K)) {
+        shapeColor = '#e0bc00';
+        shapeType = 'K';
+    }
+    else if (isCurrentShape(shapes.ZS)) {
+        shapeColor = 'darkgreen';
+        shapeType = 'ZS';
+        indexRotation = 1;
+    }
+    else if (isCurrentShape(shapes.T)) {
+        shapeColor = 'purple';
+        shapeType = 'T';
+        indexRotation = 2;
+    }
+    else if (isCurrentShape(shapes.Z)) {
+        shapeColor = 'red';
+        shapeType = 'Z';
+        indexRotation = 0;
+    }
     updateSledeciOblik();
 
 }
@@ -88,6 +181,7 @@ function novaKockaDrop() {
 
 function updateSledeciOblik() {
     let sledeciOblik = document.getElementById('sledeciOblik');
+    
     if (sledeciOblikType) {
         sledeciOblik.textContent = sledeciOblikType;
     } else {
@@ -130,8 +224,9 @@ function obojiKoordinate(){
             let celije = red.getElementsByTagName('td');
             if (koordinate.j < celije.length) {
                 let celija = celije[koordinate.j];
-                celija.style.backgroundColor = 'red';
+                celija.style.backgroundColor = 'rgb(255,0,255)';
                 celija.style.boxShadow = 'inset 0 0 20px white';
+
             }
         }
     } // obojaj stari oblik
@@ -143,9 +238,10 @@ function obojiKoordinate(){
             let celije = red.getElementsByTagName('td');
             if (koordinate.j < celije.length) {
                 let celija = celije[koordinate.j];
-                celija.style.backgroundColor = 'red';
+                celija.style.backgroundColor = shapeColor;
                 celija.style.boxShadow = 'inset 0 0 20px white';
-            }
+                
+                }
         }
     } // obojaj trenutni oblik
 }
@@ -165,6 +261,7 @@ function provjeriKoliziju() {
 }
 
 function provjeriIObrisiPuneRedove() {
+    obojiKoordinate();
     let tabela = document.querySelector('#tetris table');
     let redovi = tabela.rows;
     let fullRows = [];
@@ -177,7 +274,9 @@ function provjeriIObrisiPuneRedove() {
 
         for (let j = 0; j < celije.length; j++) {
             let celija = celije[j];
-            if (celija.style.backgroundColor !== 'red') {
+
+            if (celija.style.backgroundColor == '') {
+
                 punRed = false;
                 break;
             }
@@ -185,8 +284,7 @@ function provjeriIObrisiPuneRedove() {
 
         if (punRed) {
             fullRows.push(i);
-            brojac += 5;
-
+            brojac += 5 * (1000/intervalTime);
             updateBrojacDisplay();
 
         }
@@ -298,7 +396,8 @@ document.onkeydown = function(event) {
             break;
         
         case 82: //rotacija
-        let slovorOk = true;
+        if (shapeType != 'K'){
+        slovorOk = true;
         for (let i = 0; i < currentShape.length; i++) {
             let kocka = currentShape[i];
             if (kocka.i >= redovi.length - 1 || oldKocke.some(oldKocka => oldKocka.i === kocka.i + 1 && oldKocka.j === kocka.j)) {
@@ -307,19 +406,32 @@ document.onkeydown = function(event) {
             }
         }
         if (currentShape.length > 0) {
-            // Pronađi centar rotacije, obično je to prva kocka u obliku
-            let cx = currentShape[0].i;
-            let cy = currentShape[0].j;
 
+            let cuvajOblik = structuredClone(currentShape);
             // Rotiraj sve kocke unutar oblika
             for (let i = 0; i < currentShape.length; i++) {
-                let rotated = rotiraj(cx, cy, currentShape[i].i, currentShape[i].j);
-                currentShape[i].i = rotated.i;
-                currentShape[i].j = rotated.j;
+
+                let rotated = rotiraj(currentShape[indexRotation].i, currentShape[indexRotation].j,currentShape[i].i, currentShape[i].j);
+                if (rotated.j >= 0 && rotated.j <=9 && rotated.i >= 0 && rotated.i <=9){
+                    if (oldKocke.some(oldKocka => oldKocka.i === rotated.i && oldKocka.j === rotated.j)){
+                    }
+                    else {
+                        currentShape[i].i = rotated.i;
+                        currentShape[i].j = rotated.j;
+                    }
+          
+                }
+                else {
+                    currentShape=cuvajOblik;
+                    break;
+                }
+
             }
             obojiKoordinate();
             console.log("Rotacija izvršena");
         }
+    }
+        slovorOk = false;
         break;
     }
 }
@@ -338,12 +450,19 @@ function ubrzajPadanje() {
     if (brojac >= prethodniBrojac + 25) { 
         prethodniBrojac = brojac;
         intervalTime -= 100; 
+        
+
+        if (intervalTime < 100){
+            intervalTime = 100;
+        }
         postaviInterval(); 
     
 }
 }
 
+
 function spustajElement() {
+    if (!slovorOk){
     let tabela = document.querySelector('#tetris table');
     let redovi = tabela.rows;
     let provjera = true;
@@ -357,12 +476,14 @@ function spustajElement() {
 
     if (provjeriKoliziju()) {
         oldKocke = oldKocke.concat(currentShape);
-        provjeriIObrisiPuneRedove(); // Check and remove full rows
+        provjeriIObrisiPuneRedove();
         novaKockaDrop();
+        ucitajSlike();
     } else if (!provjera) {
         oldKocke = oldKocke.concat(currentShape);
-        provjeriIObrisiPuneRedove(); // Check and remove full rows
+        provjeriIObrisiPuneRedove();
         novaKockaDrop();
+        ucitajSlike();
     } else {
         for (let i = 0; i < currentShape.length; i++) {
             currentShape[i].i += 1;
@@ -372,26 +493,7 @@ function spustajElement() {
     obojiKoordinate();
     ubrzajPadanje();
 } 
+}
 
 
-
-
-// function provjeraGubitka(){
-//     let tabela = document.querySelector('#tetris table');
-//     let redovi = tabela.rows;
-//     let provjera = true;
-
-//     for (let i = 0; i < K.length; i++) {
-//         if (K[i].i == 0) {
-//             provjera = false;
-//         }
-//     }
-//     if (!provjera){
-//         alert("Izgubio si");
-//         window.location.href = "rekordi.html";
-//     }
-
-// }
-
-// provjeraGubitka();
 

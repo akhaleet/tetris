@@ -8,7 +8,7 @@
     <title>Tetris Igra-Uputstvo</title>
     
 </head> 
-<body>
+<body onload="refreshPage()">
 
   <div class="bcca-breadcrumb">
     <div class="bcca-breadcrumb-item" id="igrajDugme">
@@ -68,7 +68,7 @@
         
         <div class="button-container">
         <button id="prikaz" class="btn btn-dark" onclick="prikaziBlokove()">Prikazi blokove</button>
-        <button id="isprazni" class="btn btn-dark" style="display: none;" onclick="isprazniBlokove()">Isprazni blokove</button>
+        <button id="isprazni" class="btn btn-dark" onclick="isprazniBlokove()">Isprazni blokove</button>
         </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
